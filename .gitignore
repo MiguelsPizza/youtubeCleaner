@@ -1,0 +1,4 @@
+node_modules/
+extension_dist/background.js
+extension_dist/content.js
+extension_dist/popup.js

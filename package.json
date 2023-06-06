@@ -1,0 +1,19 @@
+{
+
+  "devDependencies": {
+    "@babel/core": "^7.22.1",
+    "@babel/preset-env": "^7.22.4",
+    "@tensorflow-models/universal-sentence-encoder": "^1.3.3",
+    "@tensorflow/tfjs": "^4.6.0",
+    "@tensorflow/tfjs-backend-webgpu": "^4.6.0",
+    "@types/chrome": "^0.0.237",
+    "babel-loader": "^9.1.2",
+    "lit": "^2.7.5",
+    "typescript": "^5.1.3",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.1"
+  },
+  "scripts": {
+    "build": "tsc --outDir ./extension_dist ./extension_src/*.ts && npx webpack"
+  }
+}
