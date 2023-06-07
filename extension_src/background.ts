@@ -1,35 +1,38 @@
-import { setBackend, div, mul, norm, tensor2d, sum } from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 import '@tensorflow/tfjs-backend-webgpu';
-import { load, UniversalSentenceEncoder } from '@tensorflow-models/universal-sentence-encoder';
+import * as use from '@tensorflow-models/universal-sentence-encoder';
 console.log("background.js loaded");
+tf.setBackend("webgpu");
 // Load the model.
-setBackend("webgpu");
-let model: UniversalSentenceEncoder;
-load().then((m) => {
-  model = m;
-});
+let model: use.UniversalSentenceEncoder;
+
+const init = async () => {
+  await tf.ready();
+  await tf.setBackend("webgpu");
+  model = await use.load();
+}
+init();
 
 
-chrome.runtime.onMessageExternal.addListener(async function (
+
+chrome.runtime.onMessage.addListener(async function (
   request: { [key: string]: any },
   sender: chrome.runtime.MessageSender,
   sendResponse: (response?: any) => void
 ) {
-  console.log("background.js received message", request);
+  console.log('backend', await tf.backend())
   if (request.newInput) {
     console.log('test')
     // Compute a new embedding for the input.
     const newEmbedding = await model.embed([request.newInput]);
-    const entertainmentEmbedding = newEmbedding.arraySync();
+    const entertainmentEmbedding = await newEmbedding.array();
 
     // Save the new embedding in Chrome's local storage.
     await chrome.storage.local.set({ entertainmentEmbedding: entertainmentEmbedding });
-
-    sendResponse({ status: "success", entertainmentEmbedding: entertainmentEmbedding });
   }
 
   if (request.action === "calculateCosineSimilarities") {
-    const result = await chrome.storage.local.get("entertainmentEmbedding");
+    const result = await chrome.storage.local.get(["entertainmentEmbedding"]);
     if (!result.entertainmentEmbedding) return
     const entertainmentEmbedding: number[][] = result.entertainmentEmbedding;
     const embeddings = await model.embed(request.videoTitles);
@@ -47,14 +50,14 @@ chrome.runtime.onMessageExternal.addListener(async function (
 });
 
 async function cosineSimilarities(A: number[][], B: number[][]): Promise<number[][]> {
-  let _A = tensor2d(A);
-  let _B = tensor2d(B);
+  let _A = tf.tensor2d(A);
+  let _B = tf.tensor2d(B);
 
-  const A_norm = norm(_A, "euclidean", -1).expandDims(-1);
-  const B_norm = norm(_B, "euclidean", -1).expandDims(-1);
+  const A_norm = tf.norm(_A, "euclidean", -1).expandDims(-1);
+  const B_norm = tf.norm(_B, "euclidean", -1).expandDims(-1);
 
-  const dot_product = sum(mul(_A, _B), -1).expandDims(-1);
-  const cosine_similarities = div(dot_product, mul(A_norm, B_norm));
+  const dot_product = tf.sum(tf.mul(_A, _B), -1).expandDims(-1);
+  const cosine_similarities = tf.div(dot_product, tf.mul(A_norm, B_norm));
 
   // Convert the result back to a JavaScript array
   return await cosine_similarities.array() as number[][];
