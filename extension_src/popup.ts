@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 })
 
 const updateTitle = (input: string): void => {
-  console.log({ input })
   if (!input) return
   const titleElement = document.getElementById("title") as HTMLLabelElement;
   if (titleElement) titleElement.innerHTML = `Current Filter: ${input}`;
