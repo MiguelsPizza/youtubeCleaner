@@ -19,3 +19,5 @@ const updateTitle = (input: string): void => {
   const titleElement = document.getElementById("title") as HTMLLabelElement;
   if (titleElement) titleElement.innerHTML = `Current Filter: ${input}`;
 }
+
+

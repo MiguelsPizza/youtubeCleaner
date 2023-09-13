@@ -2,3 +2,9 @@ node_modules/
 extension_dist/background.js
 extension_dist/content.js
 extension_dist/popup.js
+extension_dist/background.js.map
+extension_dist/content.js.map
+extension_dist/popup.js.map
+extension_dist/cache.js
+extension_dist/cache.js.map
+extension_dist/models

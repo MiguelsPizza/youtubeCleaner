@@ -2,17 +2,28 @@
     "manifest_version": 3,
     "name": "YouTube Video Filter",
     "version": "1.0",
-    "permissions": ["storage", "activeTab"],
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "contextMenus",
+        "storage",
+        "unlimitedStorage",
+        "background"
+      ],
     "action": {
         "default_popup": "popup.html"
     },
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module"
     },
     "content_scripts": [{
         "matches": ["<all_urls>"],
         "js": ["content.js"]
     }],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'"
+      },
     "host_permissions": [
         "https://www.googleapis.com/*"
     ]

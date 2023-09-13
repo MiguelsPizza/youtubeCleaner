@@ -3,7 +3,7 @@ require("esbuild")
     entryPoints: ["./extension_dist/background.js"],
     bundle: true,
     platform: "browser",
-    target: ["es2020"],
+    target: ["es2022"],
     outfile: "./extension_dist/background.js",
     external: ["node_modules"],
     allowOverwrite: true
